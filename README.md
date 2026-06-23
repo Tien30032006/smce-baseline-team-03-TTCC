@@ -1,6 +1,6 @@
 <div align="center">
 
-# SMCE Baseline Starter
+# 2nd URA Hackathon Baseline Starter
 
 **CPU-friendly OCR + brand/product extraction for the SMCE private test (1,202 images)**
 
@@ -159,6 +159,4 @@ Empty fields → single space `" "` in CSV.
 
 MIT — see [LICENSE](LICENSE).
 
----
 
-SMCE Challenge 2026 · RAISE Lab, HCMUT
