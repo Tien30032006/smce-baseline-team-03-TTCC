@@ -189,9 +189,9 @@ st.markdown(
 st.markdown(
     f"""
     <ul class="app-team-info">
-        <li><strong>Team Member:</strong> {cfg.TEAM_MEMBERS}</li>
-        <li><strong>Github Repo link:</strong> <a href="{cfg.GITHUB_REPO}" target="_blank">{cfg.GITHUB_REPO}</a></li>
-        <li><strong>Other resource link:</strong> <a href="{cfg.OTHER_RESOURCE}" target="_blank">{cfg.OTHER_RESOURCE}</a></li>
+        <li><strong>Thành viên:</strong> {cfg.TEAM_MEMBERS}</li>
+        <li><strong>GitHub:</strong> <a href="{cfg.GITHUB_REPO}" target="_blank">{cfg.GITHUB_REPO}</a></li>
+        <li><strong>Tài nguyên khác:</strong> <a href="{cfg.OTHER_RESOURCE}" target="_blank">{cfg.OTHER_RESOURCE}</a></li>
     </ul>
     """,
     unsafe_allow_html=True,
@@ -227,29 +227,30 @@ def _cached_model_profile() -> dict:
     return get_model_profile()
 
 
-@st.cache_resource(show_spinner="Running deploy smoke benchmark (1 image)...")
+@st.cache_resource(show_spinner="Đang chạy benchmark khởi động (1 ảnh)...")
 def _cached_deploy_smoke() -> dict:
     return get_deploy_smoke_benchmark()
 
 
 def _render_about_tab() -> None:
-    st.header("About")
+    st.header("Giới thiệu")
     st.markdown(
         """
-        Tab này dành cho **mỗi team** trình bày giải pháp OCR + trích xuất
-        **brand_name** và **product_name** cho cuộc thi. Hãy thay các placeholder
-        bên dưới bằng nội dung thật của team bạn (hoặc chỉnh trực tiếp trong
-        [`streamlit_app.py`](streamlit_app.py) hàm `_render_about_tab`).
+        Tab này trình bày giải pháp OCR + trích xuất **brand_name** và **product_name**
+        của **Team 03 - TTCC** tại cuộc thi **The 2nd URA Hackathon 2026**.
         """
     )
 
-    st.subheader("1. Thông tin team")
+    st.subheader("1. Thông tin nhóm")
     st.markdown(
         f"""
         | Trường | Nội dung |
         |--------|----------|
-        | **Tên team** | {cfg.TEAM_NAME} |
-        | **Thành viên** | {cfg.TEAM_MEMBERS} |
+        | **Tên nhóm** | {cfg.TEAM_NAME} |
+        | **Thành viên** | Huỳnh Tấn Tiến |
+        | | Phạm Nguyễn Công Thành |
+        | | Nguyễn Trần Lan Châu |
+        | | Trương Lê Đan Chi |
         | **GitHub** | [{cfg.GITHUB_REPO}]({cfg.GITHUB_REPO}) |
         """
     )
@@ -257,77 +258,75 @@ def _render_about_tab() -> None:
     st.subheader("2. Bài toán")
     st.markdown(
         """
-        Từ **ảnh sản phẩm trên kệ hàng / social media**, hệ thống cần trích xuất:
+        Từ **ảnh sản phẩm trên kệ hàng hoặc mạng xã hội**, hệ thống cần trích xuất:
 
-        - **`ocr_text`** — toàn bộ văn bản đọc được từ ảnh
-        - **`brand_name`** — tên thương hiệu
-        - **`product_name`** — tên / mô tả sản phẩm
+        - **`ocr_text`** — toàn bộ văn bản nhận dạng được từ ảnh
+        - **`brand_name`** — tên thương hiệu sản phẩm
+        - **`product_name`** — tên hoặc mô tả sản phẩm
 
-        **Điểm private round:**
+        **Công thức tính điểm (private round):**
 
         `0.4 × F1_brand + 0.35 × (1 − CER) + 0.25 × F1_product`
         """
     )
 
-    st.subheader("3. Ý tưởng & pipeline giải pháp")
+    st.subheader("3. Pipeline giải pháp")
     st.markdown(
         """
-        > **Placeholder — mô tả pipeline của team**
-
-        1. **Tiền xử lý ảnh** — `[ví dụ: resize, tăng contrast, sharpen, …]`
-        2. **OCR** — `[ví dụ: EasyOCR vi+en, PaddleOCR, custom model, …]`
-        3. **Hậu xử lý OCR** — `[ví dụ: dedupe token, chuẩn hóa Unicode, …]`
-        4. **Trích xuất brand** — `[ví dụ: regex dictionary, NER, fuzzy match, …]`
-        5. **Trích xuất product** — `[ví dụ: rule-based, sklearn, LLM, …]`
-        6. **Hậu kiểm / ensemble** — `[nếu có]`
+        1. **Tiền xử lý ảnh** — Chuyển về RGB, resize nếu cần, tăng độ tương phản để cải thiện chất lượng OCR
+        2. **OCR** — PaddleOCR (PP-OCRv4, hỗ trợ tiếng Việt + tiếng Anh), chạy trên CPU
+        3. **Hậu xử lý OCR** — Loại bỏ token trùng lặp, chuẩn hoá Unicode, ghép dòng liên quan
+        4. **Trích xuất brand** — Regex kết hợp từ điển thương hiệu; fallback sang fuzzy matching (rapidfuzz)
+        5. **Trích xuất product** — Rule-based ưu tiên; fallback sang TF-IDF + Logistic Regression
+        6. **Hậu kiểm** — Loại bỏ kết quả có độ tin cậy thấp, trả về chuỗi rỗng nếu không chắc chắn
         """
     )
 
-    st.subheader("4. Điểm khác biệt & đóng góp chính")
+    st.subheader("4. Điểm nổi bật")
     st.markdown(
         """
-        - `[Điểm mạnh 1]`
-        - `[Điểm mạnh 2]`
-        - `[Điểm mạnh 3]`
+        - **Không phụ thuộc GPU** — toàn bộ pipeline chạy trên CPU, phù hợp với môi trường Streamlit Cloud
+        - **Hỗ trợ song ngữ** — PaddleOCR nhận dạng cả tiếng Việt lẫn tiếng Anh trong cùng một ảnh
+        - **Nhẹ & nhanh** — Brand/product extraction dùng regex + TF-IDF, không cần model nặng
+        - **Dễ mở rộng** — Từ điển brand và rule product có thể cập nhật độc lập mà không cần train lại
         """
     )
 
     st.subheader("5. Công nghệ sử dụng")
     st.markdown(
         """
-        | Thành phần | Công nghệ (placeholder) |
-        |------------|-------------------------|
-        | OCR | `[EasyOCR / …]` |
-        | Brand extraction | `[Regex rules / …]` |
-        | Product extraction | `[Sklearn / …]` |
-        | Runtime | `[CPU / GPU, Python 3.11+]` |
-        | Demo UI | `Streamlit` |
+        | Thành phần | Công nghệ |
+        |------------|-----------|
+        | OCR | PaddleOCR (PP-OCRv4, vi+en) |
+        | Brand extraction | Regex rules + fuzzy matching (rapidfuzz) |
+        | Product extraction | Rule-based + TF-IDF / Logistic Regression |
+        | Runtime | CPU — Python 3.11 |
+        | Demo UI | Streamlit |
         """
     )
 
     st.subheader("6. Kết quả & đánh giá")
     st.markdown(
         """
-        | Metric | Giá trị (placeholder) |
-        |--------|------------------------|
-        | F1 brand (local) | `[—]` |
-        | 1 − CER (local) | `[—]` |
-        | F1 product (local) | `[—]` |
-        | **Private score** | `[—]` |
-        | Latency (avg / image) | `[—]` ms |
-        | Product head size | `[—]` MB |
+        | Metric | Giá trị |
+        |--------|---------|
+        | F1 brand (local) | — |
+        | 1 − CER (local) | — |
+        | F1 product (local) | — |
+        | **Private score** | — |
+        | Latency trung bình / ảnh | — ms |
+        | Kích thước product head | — MB |
         """
     )
     st.markdown(
         """
-        **Đo lightweight model (latency + footprint):**
+        **Chạy benchmark đầy đủ (local):**
 
         ```bash
         python scripts/benchmark_solution.py --limit 6
         ```
 
-        Cập nhật `MODEL_PROFILE` trong [`team_config.py`](team_config.py)
-        khi đổi OCR / model. Benchmark luôn chạy qua [`shared/benchmark.py`](shared/benchmark.py).
+        Cập nhật `MODEL_PROFILE` trong [`team_config.py`](team_config.py) khi thay đổi OCR hoặc model.
         """
     )
 
@@ -335,18 +334,22 @@ def _render_about_tab() -> None:
     st.markdown(
         """
         **Hạn chế hiện tại**
-        - `[ví dụ: brand mới chưa có trong từ điển]`
+        - Thương hiệu mới chưa có trong từ điển có thể bị bỏ sót
+        - Ảnh bị mờ, nghiêng hoặc ánh sáng kém ảnh hưởng đến độ chính xác OCR
+        - PaddleOCR cold start lần đầu tốn thời gian tải weights (~vài trăm MB)
 
         **Hướng phát triển**
-        - `[ví dụ: fine-tune OCR trên domain retail VN]`
+        - Fine-tune OCR trên tập dữ liệu sản phẩm bán lẻ Việt Nam
+        - Mở rộng từ điển brand tự động từ dữ liệu huấn luyện
+        - Thử nghiệm mô hình NER hoặc LLM nhỏ cho trích xuất product
         """
     )
 
     st.subheader("8. Liên kết")
     links = [
         f"- **Repository:** [{cfg.GITHUB_REPO}]({cfg.GITHUB_REPO})",
-        "- **Setup & deploy:** [README.md](README.md)",
-        f"- **Other resource:** [{cfg.OTHER_RESOURCE}]({cfg.OTHER_RESOURCE})",
+        "- **Hướng dẫn cài đặt & deploy:** [README.md](README.md)",
+        f"- **Tài nguyên khác:** [{cfg.OTHER_RESOURCE}]({cfg.OTHER_RESOURCE})",
     ]
     streamlit_url = getattr(cfg, "STREAMLIT_APP_URL", "")
     if streamlit_url:
@@ -357,7 +360,7 @@ def _render_about_tab() -> None:
     st.markdown("\n".join(links))
 
 
-tab_live, tab_about = st.tabs(["Live test", "About"])
+tab_live, tab_about = st.tabs(["Live test", "Giới thiệu"])
 
 with tab_live:
     _init_live_state()
@@ -365,24 +368,24 @@ with tab_live:
 
     profile = _cached_model_profile()
     smoke = _cached_deploy_smoke()
-    with st.expander("Model footprint (lightweight check)", expanded=False):
+    with st.expander("Thông tin mô hình (kiểm tra nhẹ)", expanded=False):
         st.markdown(
             f"- **Pipeline:** {profile.get('pipeline', '—')}\n"
             f"- **Runtime:** {profile.get('runtime_device', '—')}\n"
             f"- **Product head:** {profile.get('product_head_mb', 0)} MB\n"
-            f"- **OCR note:** {profile.get('ocr_backend_note', '—')}\n\n"
+            f"- **Ghi chú OCR:** {profile.get('ocr_backend_note', '—')}\n\n"
             f"{profile.get('lightweight_notes', '')}"
         )
         if smoke.get("latency_ms"):
             lat = smoke["latency_ms"]
             st.markdown(
-                f"**Deploy smoke benchmark (1 image):** "
-                f"total **{lat.get('total_avg', '—')} ms** "
+                f"**Benchmark khởi động (1 ảnh):** "
+                f"tổng **{lat.get('total_avg', '—')} ms** "
                 f"(ocr {lat.get('ocr_avg', '—')} · extract {lat.get('extract_avg', '—')})"
             )
         elif smoke.get("error"):
-            st.caption(f"Deploy smoke benchmark skipped: {smoke['error']}")
-        st.caption("Full report: `python scripts/benchmark_solution.py --limit 6`")
+            st.caption(f"Benchmark khởi động bị bỏ qua: {smoke['error']}")
+        st.caption("Báo cáo đầy đủ: `python scripts/benchmark_solution.py --limit 6`")
 
     uploaded = st.file_uploader(
         "Ảnh sản phẩm",
@@ -415,9 +418,9 @@ with tab_live:
             timing = st.session_state.get("timing_ms")
             if timing:
                 t1, t2, t3 = st.columns(3)
-                t1.metric("Total (ms)", f"{timing['total']:.1f}")
+                t1.metric("Tổng (ms)", f"{timing['total']:.1f}")
                 t2.metric("OCR (ms)", f"{timing['ocr']:.1f}")
-                t3.metric("Extract (ms)", f"{timing['extract']:.1f}")
+                t3.metric("Trích xuất (ms)", f"{timing['extract']:.1f}")
 
             st.text_area("ocr_text", height=140, key="ocr_text_live")
             st.text_input("brand_name", key="brand_name_live")
