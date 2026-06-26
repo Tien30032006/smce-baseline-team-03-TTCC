@@ -8,10 +8,10 @@ REPO_ROOT = Path(__file__).resolve().parent
 
 # Team identity (required after fork)
 TEAM_NAME = "Team 03 - TTCC"
-TEAM_MEMBERS = "Huỳnh Tấn Tiến, Phạm Nguyễn Công Thành, Nguyễn Trần Lan Châu, Trương Lê Đan Chi"
+TEAM_MEMBERS = "Huynh Tan Tien, Pham Nguyen Cong Thanh, Nguyen Tran Lan Chau, Truong Le Dan Chi"
 GITHUB_REPO = "https://github.com/Tien30032006/Team-03-TTCC"
 OTHER_RESOURCE = "https://example.com/other-resource"
-STREAMLIT_APP_URL = ""  # e.g. "https://ura-team-abc.streamlit.app" after deploy
+STREAMLIT_APP_URL = ""  # e.g. "https://ura-team-03-ttcc.streamlit.app" after deploy
 
 # Streamlit page copy
 SUBTITLE = (
@@ -39,13 +39,13 @@ DEFAULT_MIN_CONF = 0.35
 
 # Model footprint (edit when you change OCR / models — benchmark layer reads this)
 MODEL_PROFILE: dict[str, str | float | None] = {
-    "pipeline": "PaddleOCR (PP-OCRv4, vi) + regex brand rules + TF-IDF product head",
+    "pipeline": "PaddleOCR (PP-OCRv4, vi+en) + regex brand rules + TF-IDF product head",
     "runtime_device": "CPU",
     "product_head_mb": None,  # auto-estimate when None
     "ocr_backend_note": "PaddleOCR weights cached on first run (not bundled in repo)",
     "lightweight_notes": (
         "Rule-based brand/product extraction (regex) runs first; falls back to a "
-        "lightweight TF-IDF + Logistic Regression head, then fuzzy matching. "
+        "lightweight TF-IDF + Logistic Regression head, then fuzzy matching (rapidfuzz). "
         "OCR runs on CPU only (no GPU dependency)."
     ),
 }
