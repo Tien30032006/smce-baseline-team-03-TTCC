@@ -247,10 +247,7 @@ def _render_about_tab() -> None:
         | Trường | Nội dung |
         |--------|----------|
         | **Tên nhóm** | {cfg.TEAM_NAME} |
-        | **Thành viên** | Huỳnh Tấn Tiến |
-        | | Phạm Nguyễn Công Thành |
-        | | Nguyễn Trần Lan Châu |
-        | | Trương Lê Đan Chi |
+        | **Thành viên** | Huỳnh Tấn Tiến, Phạm Nguyễn Công Thành, Nguyễn Trần Lan Châu, Trương Lê Đan Chi |
         | **GitHub** | [{cfg.GITHUB_REPO}]({cfg.GITHUB_REPO}) |
         """
     )
